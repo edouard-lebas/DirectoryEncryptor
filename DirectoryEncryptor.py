@@ -11,6 +11,7 @@ class Directory:
     def __init__(self, path):
         self.path = path
 
+    #recover all files of path
     def all_files(self):
         files = []
         for f in listdir(self.path):
@@ -18,6 +19,7 @@ class Directory:
                 files.append(join(self.path, f))
         return files
 
+    #recover all crypted files
     def all_files_crypted(self, extension):
         files = []
         for f in listdir(self.path):
@@ -43,6 +45,7 @@ class Encryptor:
         self.chunksizeDecr = chunksizeDecr
         self.extension = extension
 
+    #encrypt file with key and iv
     def encrypt_files(self, files):
         for f in files:
             out_filename = f + self.extension
@@ -65,7 +68,8 @@ class Encryptor:
                         outfile.write(encryptor.encrypt(chunk))
             print(f)
             os.remove(f)
-
+    #decrypt file with key and iv
+    #the key is in the first 16 characters of the file
     def decrypt_files(self, files):
         for f in files:
             out_filename = os.path.splitext(f)[0]
@@ -94,5 +98,5 @@ if __name__ == '__main__':
     files = d.all_files()
     c = Encryptor(b"1234567812345678", 64*1024, 24*1024, ".DirectoryEncryptor")
     c.encrypt_files(files)
-    files = d.all_files()
+    files = d.all_files_crypted(".DirectoryEncryptor")
     c.decrypt_files(files)
